@@ -1,5 +1,10 @@
 import React from "react";
+import { Container, Segment } from "semantic-ui-react";
 
-const LoadingPage = () => <main>Loading&hellip;</main>;
+const LoadingPage = () => (
+  <Container>
+    <Segment padded loading massive />
+  </Container>
+);
 
 export default LoadingPage;

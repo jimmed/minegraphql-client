@@ -1,21 +1,14 @@
-import React, { Fragment, useState } from "react";
+import React from "react";
 import { Switch, Route, Redirect } from "react-router";
-import AppHeader from "./components/AppHeader";
-import AppDrawer from "./components/AppDrawer";
 import AllMinecraftVersionsPage from "./pages/AllMinecraftVersions";
+import MinecraftVersionPage from "./pages/MinecraftVersion";
 
-const App = () => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  return (
-    <Fragment>
-      <AppHeader drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
-      <AppDrawer drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
-      <Switch>
-        <Route path="/minecraft" exact component={AllMinecraftVersionsPage} />
-        <Redirect from="/" exact to="/minecraft" />
-      </Switch>
-    </Fragment>
-  );
-};
+const App = () => (
+  <Switch>
+    <Route path="/minecraft" exact component={AllMinecraftVersionsPage} />
+    <Route path="/minecraft/:versionId" component={MinecraftVersionPage} />
+    <Redirect from="/" exact to="/minecraft" />
+  </Switch>
+);
 
 export default App;

@@ -7,19 +7,17 @@ const hookedPage = (
   Page,
   LoadingPage = DefaultLoadingPage,
   ErrorPage = DefaultErrorPage
-) => () => {
+) => props => {
   const InnerPage = () => {
-    const { data, error } = hook();
+    const { data, error } = hook(props);
 
     return error ? <ErrorPage error={error} /> : <Page {...data} />;
   };
 
   return (
-    <main>
-      <Suspense fallback={<LoadingPage />}>
-        <InnerPage />
-      </Suspense>
-    </main>
+    <Suspense fallback={<LoadingPage />} maxDuration={150}>
+      <InnerPage />
+    </Suspense>
   );
 };
 

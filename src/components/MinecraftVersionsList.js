@@ -1,47 +1,67 @@
 import React from "react";
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableHead from "@material-ui/core/TableHead";
-import TableBody from "@material-ui/core/TableBody";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
-import Tooltip from "@material-ui/core/Tooltip";
-import formatDate from "date-fns/format";
+import { withRouter } from "react-router";
+import { Segment, Label, List, Header, Popup } from "semantic-ui-react";
 import distanceInWordsToNow from "date-fns/distance_in_words_to_now";
+import parseDate from "date-fns/parse";
 
-const MinecraftVersionsList = ({ minecraftVersions = [] }) => (
-  <Paper>
-    <Table>
-      <TableHead>
-        <TableRow>
-          <TableCell>Version</TableCell>
-          <TableCell>Release Channel</TableCell>
-          <TableCell>Release Date</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {minecraftVersions.map(row => {
-          return (
-            <TableRow key={row.id}>
-              <TableCell component="th" scope="row">
-                {row.id}
-              </TableCell>
-              <TableCell>{row.releaseChannel.toLowerCase()}</TableCell>
-              <TableCell>
-                <Tooltip
-                  title={distanceInWordsToNow(row.releasedAt, {
-                    addSuffix: true
-                  })}
+const releaseChannelColor = {
+  SNAPSHOT: "purple",
+  RELEASE: "blue"
+};
+
+const MinecraftVersionsList = ({ versions, match, history }) => (
+  <List selection relaxed>
+    {versions.map(version => {
+      return (
+        <List.Item
+          key={version.id}
+          onClick={() => history.push(`${match.url}/${version.id}`)}
+        >
+          <List.Content floated="left">
+            <Popup
+              trigger={
+                <Label
+                  circular
+                  size="large"
+                  color={releaseChannelColor[version.releaseChannel]}
                 >
-                  {formatDate(row.releasedAt, "MMM D 'YY")}
-                </Tooltip>
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
-  </Paper>
+                  {version.releaseChannel.replace("OLD_", "")[0]}
+                </Label>
+              }
+              content={version.releaseChannel}
+            />
+          </List.Content>
+          <List.Content>
+            <List.Header as="a">{version.id}</List.Header>
+            <List.Description>
+              Released{" "}
+              <Popup
+                content={parseDate(version.releasedAt).toLocaleString()}
+                trigger={
+                  <abbr>
+                    {distanceInWordsToNow(version.releasedAt, {
+                      addSuffix: true
+                    })}
+                  </abbr>
+                }
+              />
+            </List.Description>
+          </List.Content>
+        </List.Item>
+      );
+    })}
+  </List>
 );
 
-export default MinecraftVersionsList;
+const MinecraftVersions = ({ minecraftVersions = [], match, history }) => (
+  <Segment>
+    <Header size="huge">All Minecraft Versions</Header>
+    <MinecraftVersionsList
+      match={match}
+      history={history}
+      versions={minecraftVersions}
+    />
+  </Segment>
+);
+
+export default withRouter(MinecraftVersions);
